@@ -341,3 +341,33 @@ $('btnTheme').addEventListener('click', () => {
   $('btnTheme').textContent = isLight ? '🌙' : '☀';
   localStorage.setItem('base_miniapp_theme', isLight ? 'light' : 'dark');
 });
+
+// ── Input validation ──────────────────────────────────────────────────────────
+
+/**
+ * Validates a hex Ethereum address.
+ * Returns true for 40-hex-char strings with or without 0x prefix.
+ */
+function isValidAddress(addr) {
+  return /^(0x)?[0-9a-fA-F]{40}$/.test(addr.trim());
+}
+
+/**
+ * Validates an ETH amount string.
+ * Must be a positive finite number with at most 18 decimal places.
+ */
+function isValidAmount(value) {
+  const n = parseFloat(value);
+  if (!isFinite(n) || n <= 0) return false;
+  const parts = value.split('.');
+  return !parts[1] || parts[1].length <= 18;
+}
+
+// Live inline validation feedback
+$('toAddress').addEventListener('input', function () {
+  this.style.borderColor = this.value && !isValidAddress(this.value) ? 'var(--red)' : '';
+});
+
+$('sendAmount').addEventListener('input', function () {
+  this.style.borderColor = this.value && !isValidAmount(this.value) ? 'var(--red)' : '';
+});
