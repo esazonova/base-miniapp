@@ -116,6 +116,8 @@ function onConnected() {
   sendSection.classList.remove('hidden');
   walletAddress.textContent = account;
   fetchBalance();
+  $('statsSection').classList.remove('hidden');
+  fetchNetworkStats();
 }
 
 function disconnect() {
@@ -124,6 +126,7 @@ function disconnect() {
   networkBadge.className   = 'network-badge';
   walletSection.classList.add('hidden');
   sendSection.classList.add('hidden');
+  $('statsSection').classList.add('hidden');
   connectSection.classList.remove('hidden');
   hideStatus();
   toAddress.value = ''; sendAmount.value = '';
@@ -179,3 +182,39 @@ $('btnCopy').addEventListener('click', async () => {
     log('Address copied to clipboard');
   } catch { log('Clipboard access denied'); }
 });
+
+// ── Network stats ─────────────────────────────────────────────────────────────
+async function fetchNetworkStats() {
+  try {
+    const [blockHex, gasPriceHex, chainIdHex] = await Promise.all([
+      window.ethereum.request({ method: 'eth_blockNumber',        params: [] }),
+      window.ethereum.request({ method: 'eth_gasPrice',           params: [] }),
+      window.ethereum.request({ method: 'eth_chainId',            params: [] }),
+    ]);
+
+    $('statBlock').textContent    = parseInt(blockHex, 16).toLocaleString();
+    $('statGasPrice').textContent = (parseInt(gasPriceHex, 16) / 1e9).toFixed(3) + ' Gwei';
+    $('statChainId').textContent  = parseInt(chainIdHex, 16);
+
+    // Fetch latest block for base fee (EIP-1559)
+    const block = await window.ethereum.request({
+      method: 'eth_getBlockByNumber',
+      params: [blockHex, false],
+    });
+    if (block && block.baseFeePerGas) {
+      $('statBaseFee').textContent = (parseInt(block.baseFeePerGas, 16) / 1e9).toFixed(3) + ' Gwei';
+    } else {
+      $('statBaseFee').textContent = 'N/A';
+    }
+  } catch (e) {
+    $('statBlock').textContent = $('statGasPrice').textContent = '—';
+  }
+}
+
+// Show stats section when connected and wire refresh button
+const _origOnConnected = onConnected;
+// Patch onConnected to also show stats
+const statsSection = $('statsSection');
+const _onConnectedOrig = window._onConnectedOrig;
+
+$('btnRefreshStats').addEventListener('click', () => { fetchNetworkStats(); log('Network stats refreshed'); });

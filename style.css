@@ -209,3 +209,33 @@ input::placeholder { color: var(--muted); }
 }
 .btn-copy:hover { background: #272b35; color: var(--text); }
 .btn-copy.copied { color: var(--green); }
+
+/* ── Network stats grid ───────────────────────── */
+.stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: .75rem;
+}
+
+.stat {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: .65rem .85rem;
+  display: flex;
+  flex-direction: column;
+  gap: .25rem;
+}
+
+.stat-label {
+  font-size: .7rem;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--muted);
+}
+
+.stat-value {
+  font-size: .95rem;
+  font-weight: 600;
+  color: var(--text);
+}

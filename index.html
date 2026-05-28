@@ -69,6 +69,30 @@
         <div class="tx-status hidden" id="txStatus"></div>
       </section>
 
+      <!-- Network stats (hidden until connected) -->
+      <section class="card hidden" id="statsSection">
+        <h2>Network</h2>
+        <div class="stats-grid">
+          <div class="stat">
+            <span class="stat-label">Block</span>
+            <span class="stat-value" id="statBlock">—</span>
+          </div>
+          <div class="stat">
+            <span class="stat-label">Base fee</span>
+            <span class="stat-value" id="statBaseFee">—</span>
+          </div>
+          <div class="stat">
+            <span class="stat-label">Gas price</span>
+            <span class="stat-value" id="statGasPrice">—</span>
+          </div>
+          <div class="stat">
+            <span class="stat-label">Chain ID</span>
+            <span class="stat-value" id="statChainId">—</span>
+          </div>
+        </div>
+        <button class="btn btn-ghost" id="btnRefreshStats">↻ Refresh stats</button>
+      </section>
+
       <!-- Activity log -->
       <section class="card hidden" id="logSection">
         <h2>Activity</h2>
