@@ -245,3 +245,87 @@ async function estimateGas() {
 
 $('toAddress').addEventListener('blur',  estimateGas);
 $('sendAmount').addEventListener('blur', estimateGas);
+
+// ── Transaction history ───────────────────────────────────────────────────────
+const HISTORY_KEY = 'base_miniapp_tx_history';
+
+function loadHistory() {
+  try { return JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]'); } catch { return []; }
+}
+
+function saveHistory(history) {
+  localStorage.setItem(HISTORY_KEY, JSON.stringify(history.slice(0, 50)));
+}
+
+function addToHistory(entry) {
+  const history = loadHistory();
+  history.unshift(entry);
+  saveHistory(history);
+  renderHistory();
+}
+
+function renderHistory() {
+  const history = loadHistory();
+  const txList  = $('txList');
+  const section = $('historySection');
+
+  if (!history.length) { section.classList.add('hidden'); return; }
+
+  section.classList.remove('hidden');
+  txList.innerHTML = '';
+
+  history.forEach(tx => {
+    const net      = NETWORKS[tx.network] || NETWORKS.mainnet;
+    const explorer = net.explorer + tx.hash;
+    const li       = document.createElement('li');
+    li.className   = 'tx-item';
+    li.innerHTML   = `
+      <div class="tx-row">
+        <a class="tx-hash" href="${explorer}" target="_blank" rel="noopener">${tx.hash.slice(0,10)}…${tx.hash.slice(-6)}</a>
+        <span class="tx-amount">${tx.amount} ETH</span>
+      </div>
+      <div class="tx-row">
+        <span class="tx-meta">To: ${tx.to.slice(0,8)}…${tx.to.slice(-4)}</span>
+        <span class="tx-meta">${tx.date}</span>
+      </div>`;
+    txList.appendChild(li);
+  });
+}
+
+// Hook into sendEth to record successful txs
+const _origSendEth = sendEth;
+// Override send to persist history — patch after definition
+document.addEventListener('DOMContentLoaded', () => {});
+
+$('btnSend').addEventListener('tx-recorded', e => {});  // placeholder
+
+// Patch sendEth to save tx after success — inject via event
+(function patchSend() {
+  const btn = $('btnSend');
+  // We re-wire the click listener to wrap sendEth with history recording
+  btn.removeEventListener('click', sendEth);
+  btn.addEventListener('click', async () => {
+    const to     = $('toAddress').value.trim();
+    const amount = parseFloat($('sendAmount').value);
+    await sendEth();
+    // Check if send succeeded by looking at txStatus class
+    if ($('txStatus').classList.contains('success') && account) {
+      addToHistory({
+        hash:    $('txStatus').textContent.match(/0x[0-9a-fA-F]+/)?.[0] || '',
+        to,
+        amount:  isNaN(amount) ? '?' : amount.toString(),
+        network: networkKey,
+        date:    new Date().toLocaleString(),
+      });
+    }
+  });
+})();
+
+$('btnClearHistory').addEventListener('click', () => {
+  localStorage.removeItem(HISTORY_KEY);
+  renderHistory();
+  log('Transaction history cleared');
+});
+
+// Render on load
+renderHistory();

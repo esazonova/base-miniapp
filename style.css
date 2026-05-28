@@ -256,3 +256,42 @@ input::placeholder { color: var(--muted); }
   font-weight: 600;
   color: var(--text);
 }
+
+/* ── Tx history ───────────────────────────────── */
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.btn-sm { font-size: .75rem; padding: .3rem .7rem; }
+
+.tx-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+.tx-item {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: .6rem .8rem;
+  font-size: .82rem;
+  display: flex;
+  flex-direction: column;
+  gap: .2rem;
+}
+
+.tx-item .tx-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.tx-item .tx-hash  { color: var(--blue); text-decoration: none; font-family: monospace; }
+.tx-item .tx-hash:hover { text-decoration: underline; }
+.tx-item .tx-meta  { color: var(--muted); }
+.tx-item .tx-amount { font-weight: 600; }
