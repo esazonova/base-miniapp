@@ -239,3 +239,20 @@ input::placeholder { color: var(--muted); }
   font-weight: 600;
   color: var(--text);
 }
+
+/* ── Gas estimate ─────────────────────────────── */
+.gas-estimate {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: .85rem;
+  padding: .5rem .75rem;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--muted);
+}
+.gas-estimate span:last-child {
+  font-weight: 600;
+  color: var(--text);
+}

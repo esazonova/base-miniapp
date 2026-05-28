@@ -65,6 +65,10 @@
           <label for="sendAmount">Amount (ETH)</label>
           <input id="sendAmount" type="number" placeholder="0.001" min="0" step="0.0001" />
         </div>
+        <div class="gas-estimate hidden" id="gasEstimate">
+          <span class="gas-label">Estimated gas</span>
+          <span id="gasEstimateValue">—</span>
+        </div>
         <button class="btn btn-primary" id="btnSend">Send ETH</button>
         <div class="tx-status hidden" id="txStatus"></div>
       </section>

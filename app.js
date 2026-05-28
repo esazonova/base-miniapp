@@ -218,3 +218,30 @@ const statsSection = $('statsSection');
 const _onConnectedOrig = window._onConnectedOrig;
 
 $('btnRefreshStats').addEventListener('click', () => { fetchNetworkStats(); log('Network stats refreshed'); });
+
+// ── Gas estimator ─────────────────────────────────────────────────────────────
+async function estimateGas() {
+  const to     = $('toAddress').value.trim();
+  const amount = parseFloat($('sendAmount').value);
+  if (!account || !/^0x[0-9a-fA-F]{40}$/.test(to) || isNaN(amount) || amount <= 0) {
+    $('gasEstimate').classList.add('hidden');
+    return;
+  }
+  const weiHex = '0x' + BigInt(Math.round(amount * 1e18)).toString(16);
+  try {
+    const [gasHex, gasPriceHex] = await Promise.all([
+      window.ethereum.request({ method: 'eth_estimateGas', params: [{ from: account, to, value: weiHex }] }),
+      window.ethereum.request({ method: 'eth_gasPrice', params: [] }),
+    ]);
+    const gasUnits = parseInt(gasHex, 16);
+    const gasPrice = parseInt(gasPriceHex, 16);
+    const costEth  = (gasUnits * gasPrice / 1e18).toFixed(8);
+    $('gasEstimateValue').textContent = `${gasUnits.toLocaleString()} units ≈ ${costEth} ETH`;
+    $('gasEstimate').classList.remove('hidden');
+  } catch {
+    $('gasEstimate').classList.add('hidden');
+  }
+}
+
+$('toAddress').addEventListener('blur',  estimateGas);
+$('sendAmount').addEventListener('blur', estimateGas);
