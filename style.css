@@ -188,3 +188,24 @@ input::placeholder { color: var(--muted); }
 
 /* ── Utility ──────────────────────────────────── */
 .hidden { display: none !important; }
+
+/* ── Copy address button ──────────────────────── */
+.addr-row {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+}
+
+.btn-copy {
+  background: var(--border);
+  border: none;
+  border-radius: 6px;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: .9rem;
+  padding: .2rem .45rem;
+  transition: background .15s, color .15s;
+  flex-shrink: 0;
+}
+.btn-copy:hover { background: #272b35; color: var(--text); }
+.btn-copy.copied { color: var(--green); }
