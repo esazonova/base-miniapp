@@ -329,3 +329,15 @@ $('btnClearHistory').addEventListener('click', () => {
 
 // Render on load
 renderHistory();
+
+// ── Theme toggle ─────────────────────────────────────────────────────────────
+(function initTheme() {
+  const saved = localStorage.getItem('base_miniapp_theme') || 'dark';
+  if (saved === 'light') { document.body.classList.add('light'); $('btnTheme').textContent = '🌙'; }
+})();
+
+$('btnTheme').addEventListener('click', () => {
+  const isLight = document.body.classList.toggle('light');
+  $('btnTheme').textContent = isLight ? '🌙' : '☀';
+  localStorage.setItem('base_miniapp_theme', isLight ? 'light' : 'dark');
+});
